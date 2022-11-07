@@ -23,6 +23,23 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+// mongo DB run function start
+const run = async () => {
+  const servicesCollection = client.db("khaiyalamuDB").collection("services");
+
+  //   Get Data From Mongo DB start
+  app.get("/services", async (req, res) => {
+    const query = {};
+    const cursor = servicesCollection.find(query);
+    const services = await cursor.toArray();
+    res.send(services);
+  });
+  //   Get Data From Mongo DB end
+};
+
+run().catch((error) => console.error(error));
+// mongo DB run function end
+
 // mongo DB connect API end
 
 app.use("/", (req, res) => {
