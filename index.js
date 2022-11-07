@@ -15,8 +15,6 @@ app.use(express.json());
 // mongo DB connect API start
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.2ahck7i.mongodb.net/?retryWrites=true&w=majority`;
-
-console.log(uri);
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -27,14 +25,14 @@ const client = new MongoClient(uri, {
 const run = async () => {
   const servicesCollection = client.db("khaiyalamuDB").collection("services");
 
-  //   Get Data From Mongo DB start
+  //   Get Data 3 services From Mongo DB start
   app.get("/services", async (req, res) => {
     const query = {};
     const cursor = servicesCollection.find(query);
-    const services = await cursor.toArray();
+    const services = await cursor.limit(3).toArray();
     res.send(services);
   });
-  //   Get Data From Mongo DB end
+  //   Get Data 3 services From Mongo DB end
 };
 
 run().catch((error) => console.error(error));
