@@ -24,6 +24,7 @@ const client = new MongoClient(uri, {
 // mongo DB run function start
 const run = async () => {
   const servicesCollection = client.db("khaiyalamuDB").collection("services");
+  const reviewsCollection = client.db("khaiyalamuDB").collection("reviews");
 
   //   Get Data 3 services From Mongo DB start
   app.get("/limitedServices", async (req, res) => {
@@ -51,6 +52,24 @@ const run = async () => {
     res.send(service);
   });
   // one service by id API from mongo DB end
+
+  // review post API start
+  app.post("/reviews", async (req, res) => {
+    const review = req.body;
+    const result = await reviewsCollection.insertOne(review);
+    res.send(result);
+    console.log(result);
+  });
+  // review post API end
+
+  // review get API start
+  app.get("/reviews", async (req, res) => {
+    const query = {};
+    const cursor = reviewsCollection.find(query);
+    const reviews = await cursor.toArray();
+    res.send(reviews);
+  });
+  // review get API end
 };
 
 run().catch((error) => console.error(error));
