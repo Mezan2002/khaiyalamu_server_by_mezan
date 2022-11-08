@@ -26,13 +26,22 @@ const run = async () => {
   const servicesCollection = client.db("khaiyalamuDB").collection("services");
 
   //   Get Data 3 services From Mongo DB start
-  app.get("/services", async (req, res) => {
+  app.get("/limitedServices", async (req, res) => {
     const query = {};
     const cursor = servicesCollection.find(query);
     const services = await cursor.limit(3).toArray();
     res.send(services);
   });
   //   Get Data 3 services From Mongo DB end
+
+  // all services From Mongo DB start
+  app.get("/services", async (req, res) => {
+    const query = {};
+    const cursor = servicesCollection.find(query);
+    const services = await cursor.toArray();
+    res.send(services);
+  });
+  // all services From Mongo DB end
 };
 
 run().catch((error) => console.error(error));
