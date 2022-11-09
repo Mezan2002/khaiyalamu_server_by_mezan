@@ -44,6 +44,14 @@ const run = async () => {
   });
   // all services From Mongo DB end
 
+  // add a new service API start
+  app.post("/service", async (req, res) => {
+    const serviceInfo = req.body;
+    const result = await servicesCollection.insertOne(serviceInfo);
+    res.send(result);
+  });
+  // add a new service API end
+
   // one service by id API from mongo DB start
   app.get("/services/:id", async (req, res) => {
     const id = req.params.id;
@@ -58,13 +66,17 @@ const run = async () => {
     const review = req.body;
     const result = await reviewsCollection.insertOne(review);
     res.send(result);
-    console.log(result);
   });
   // review post API end
 
   // review get API start
   app.get("/reviews", async (req, res) => {
-    const query = {};
+    const userEmail = req.query.email;
+    console.log(userEmail);
+    let query = {};
+    if (userEmail) {
+      query = { useremail: userEmail };
+    }
     const cursor = reviewsCollection.find(query);
     const reviews = await cursor.toArray();
     res.send(reviews);
@@ -78,7 +90,7 @@ const run = async () => {
     const result = await reviewsCollection.deleteOne(query);
     res.send(result);
   });
-  // delete review API end
+  // delete review API
 };
 
 run().catch((error) => console.error(error));
