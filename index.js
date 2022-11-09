@@ -21,6 +21,10 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+// JWT token start
+const JWT = (req, res, next) => {};
+// JWT token end
+
 // mongo DB run function start
 const run = async () => {
   const servicesCollection = client.db("khaiyalamuDB").collection("services");
@@ -90,7 +94,33 @@ const run = async () => {
     const result = await reviewsCollection.deleteOne(query);
     res.send(result);
   });
-  // delete review API
+  // delete review API end
+
+  // update review API start
+  app.put("/reviews/:id", async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) };
+    const previousReview = req.body;
+    const option = { upsert: true };
+    const updatedReview = {
+      $set: {
+        review: previousReview.review,
+        username: previousReview.username,
+        photoURL: previousReview.photoURL,
+        useremail: previousReview.useremail,
+        ratings: previousReview.ratings,
+      },
+    };
+    console.log(updatedReview.$set);
+    const result = await reviewsCollection.updateOne(
+      filter,
+      updatedReview,
+      option
+    );
+    res.send(result);
+  });
+
+  // update review API end
 };
 
 run().catch((error) => console.error(error));
