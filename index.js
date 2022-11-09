@@ -70,6 +70,15 @@ const run = async () => {
     res.send(reviews);
   });
   // review get API end
+
+  // delete review API start
+  app.delete("/reviews/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const result = await reviewsCollection.deleteOne(query);
+    res.send(result);
+  });
+  // delete review API end
 };
 
 run().catch((error) => console.error(error));
