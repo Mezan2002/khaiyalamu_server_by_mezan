@@ -88,12 +88,8 @@ const run = async () => {
   // review post API end
 
   // review get API start
-  app.get("/reviews", verifyJWT, async (req, res) => {
-    const decoded = req.decoded;
+  app.get("/reviews", async (req, res) => {
     const userEmail = req.query.email;
-    if (decoded.email !== userEmail) {
-      res.status(401).send({ message: "Unauthorized User" });
-    }
     let query = {};
     if (userEmail) {
       query = { useremail: userEmail };
