@@ -23,7 +23,20 @@ const client = new MongoClient(uri, {
 });
 
 // JWT token start
-const JWT = (req, res, next) => {};
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).send({ message: "Unauthorized User" });
+  }
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (error, decoded) {
+    if (error) {
+      res.status(401).send({ message: "Unauthorized User" });
+    }
+    req.decoded = decoded;
+  });
+  next();
+};
 // JWT token end
 
 // mongo DB run function start
@@ -75,9 +88,12 @@ const run = async () => {
   // review post API end
 
   // review get API start
-  app.get("/reviews", async (req, res) => {
+  app.get("/reviews", verifyJWT, async (req, res) => {
+    const decoded = req.decoded;
     const userEmail = req.query.email;
-    console.log(userEmail);
+    if (decoded.email !== userEmail) {
+      res.status(401).send({ message: "Unauthorized User" });
+    }
     let query = {};
     if (userEmail) {
       query = { useremail: userEmail };
@@ -128,6 +144,16 @@ const run = async () => {
   });
 
   // update review API end
+
+  // JWT API start
+  app.post("/jwt", (req, res) => {
+    const user = req.body;
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+    res.send({ token });
+  });
+  // JWT API end
 };
 
 run().catch((error) => console.error(error));
