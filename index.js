@@ -1,6 +1,7 @@
 // require start
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const app = express();
@@ -81,7 +82,10 @@ const run = async () => {
     if (userEmail) {
       query = { useremail: userEmail };
     }
-    const cursor = reviewsCollection.find(query);
+    const options = {
+      sort: { createdTime: -1 },
+    };
+    const cursor = reviewsCollection.find(query, options);
     const reviews = await cursor.toArray();
     res.send(reviews);
   });
