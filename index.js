@@ -87,6 +87,15 @@ const run = async () => {
   });
   // review get API end
 
+  // single review get API start
+  app.get("/reviews/:id", async (req, res) => {
+    const id = req.params.id;
+    let query = { _id: ObjectId(id) };
+    const review = await reviewsCollection.findOne(query);
+    res.send(review);
+  });
+  // single review get API end
+
   // delete review API start
   app.delete("/reviews/:id", async (req, res) => {
     const id = req.params.id;
@@ -97,11 +106,10 @@ const run = async () => {
   // delete review API end
 
   // update review API start
-  app.put("/reviews/:id", async (req, res) => {
+  app.patch("/reviews/:id", async (req, res) => {
     const id = req.params.id;
     const filter = { _id: ObjectId(id) };
     const previousReview = req.body;
-    const option = { upsert: true };
     const updatedReview = {
       $set: {
         review: previousReview.review,
@@ -111,12 +119,7 @@ const run = async () => {
         ratings: previousReview.ratings,
       },
     };
-    console.log(updatedReview.$set);
-    const result = await reviewsCollection.updateOne(
-      filter,
-      updatedReview,
-      option
-    );
+    const result = await reviewsCollection.updateOne(filter, updatedReview);
     res.send(result);
   });
 
